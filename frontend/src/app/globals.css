@@ -1,0 +1,372 @@
+@import "tailwindcss";
+
+/*
+  Systeme de design "encre / validation" - remplace le gris "ciment"
+  uniforme du frontend actuel.
+
+  Choix motives par le sujet (plateforme d'approbation de workflows) plutot
+  que par defaut generique :
+  - la sidebar passe au bleu encre profond (#101425), pas un simple gris
+    fonce ni un noir pur - une teinte qui a une identite propre.
+  - un seul accent, un vert emeraude sourd (#0E9F8E), choisi parce que
+    l'action centrale du produit est de VALIDER une demande - l'accent est
+    donc celui de l'approbation, pas une couleur de marque arbitraire.
+  - le contenu principal reste sur un fond clair (papier froid, pas creme)
+    pour un usage professionnel prolonge, ecran allume toute la journee.
+*/
+
+:root {
+  --canvas: #f6f7f9;
+  --page: #e7ebf2; /* fond DERRIERE les pages uniquement ; les formulaires gardent --canvas / --surface */
+  --surface: #ffffff;
+  --ink: #12151c;
+  --ink-dim: #5b6270;
+  --ink-faint: #6b7180; /* 4.6:1 sur le fond canvas (l'ancien #8a90a0 n'atteignait que 3:1) */
+  --line: #e4e6eb;
+  --line-strong: #d3d6de;
+
+  --sidebar: #101425;
+  --sidebar-line: #1d2236;
+  --sidebar-ink: #e8eaf0;
+  --sidebar-dim: #9097ad; /* 5.9:1 sur la barre laterale, 5.3:1 sur l'entree active */
+  --sidebar-active: #171c33;
+
+  --accent: #0e9f8e;
+  --accent-strong: #0b7f72;
+  --accent-soft: #e3f5f2;
+  --accent-ink: #04332d;
+  --accent-deep: #08665b;
+  --accent-text: #0b7f72; /* texte et liens d'accent sur fond de surface */
+
+  --warn: #8a5a12; /* 5.4:1 sur --warn-soft (l'ancien #b7791f : 3.3:1) */
+  --warn-soft: #fbf1de;
+  --danger: #c0433a;
+  --danger-soft: #fbe9e7;
+
+  /* Degrade des titres de page (defile lentement) : 6,4:1 a 9:1 sur --canvas. */
+  --titre-a: #08665b;
+  --titre-b: #3730a3;
+  --titre-c: #0b6b8a;
+  --ombre-carte: 0 1px 2px rgba(16, 20, 37, 0.05), 0 18px 40px -18px rgba(16, 20, 37, 0.22);
+  --halo-accent: rgba(14, 159, 142, 0.16);
+  --halo-indigo: rgba(99, 102, 241, 0.12);
+}
+
+/*
+  Theme sombre : suit la preference du systeme (prefers-color-scheme). Tous les ecrans passent par les jetons
+  ci-dessus ; seule la zone de signature reste en « papier » clair (l'image signee est enregistree sur fond blanc).
+  Contrastes mesures : texte 15,9:1, texte attenue 8,3:1, texte faible 6,3:1 sur --canvas ; bouton blanc sur
+  --accent-strong 4,9:1 (inchange) ; liens --accent-text 8,4:1.
+*/
+/* Le choix manuel (bouton de la barre, data-theme sur <html>) l'emporte sur la preference du systeme. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --canvas: #0c0f1a;
+    --page: #11162a; /* fond derriere les pages : a peine plus clair que l'original, formulaires inchanges */
+    --surface: #141828;
+    --ink: #e8eaf0;
+    --ink-dim: #a4abbd;
+    --ink-faint: #8d94a8;
+    --line: #232840;
+    --line-strong: #323853;
+  
+    --sidebar: #080b14;
+    --sidebar-line: #1a1f33;
+    --sidebar-active: #141a2e;
+  
+    --titre-a: #5eead4;
+    --titre-b: #a5b4fc;
+    --titre-c: #7dd3fc;
+    --ombre-carte: 0 1px 2px rgba(0, 0, 0, 0.25), 0 22px 48px -20px rgba(0, 0, 0, 0.55);
+    --halo-accent: rgba(63, 199, 179, 0.13);
+    --halo-indigo: rgba(129, 140, 248, 0.14);
+  
+    --accent-soft: #123a36;
+    --accent-ink: #bff0e8;
+    --accent-text: #3fc7b3;
+  
+    --warn: #e0b25a;
+    --warn-soft: #3a2c10;
+    --danger: #ef8077;
+    --danger-soft: #3d1b19;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: #0c0f1a;
+  --page: #11162a; /* fond derriere les pages : a peine plus clair que l'original, formulaires inchanges */
+  --surface: #141828;
+  --ink: #e8eaf0;
+  --ink-dim: #a4abbd;
+  --ink-faint: #8d94a8;
+  --line: #232840;
+  --line-strong: #323853;
+
+  --sidebar: #080b14;
+  --sidebar-line: #1a1f33;
+  --sidebar-active: #141a2e;
+
+  --titre-a: #5eead4;
+  --titre-b: #a5b4fc;
+  --titre-c: #7dd3fc;
+  --ombre-carte: 0 1px 2px rgba(0, 0, 0, 0.25), 0 22px 48px -20px rgba(0, 0, 0, 0.55);
+  --halo-accent: rgba(63, 199, 179, 0.13);
+  --halo-indigo: rgba(129, 140, 248, 0.14);
+
+  --accent-soft: #123a36;
+  --accent-ink: #bff0e8;
+  --accent-text: #3fc7b3;
+
+  --warn: #e0b25a;
+  --warn-soft: #3a2c10;
+  --danger: #ef8077;
+  --danger-soft: #3d1b19;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-line: var(--sidebar-line);
+  --color-sidebar-ink: var(--sidebar-ink);
+  --color-sidebar-dim: var(--sidebar-dim);
+  --color-sidebar-active: var(--sidebar-active);
+
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-text: var(--accent-text);
+
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --font-sans: "Manrope Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+/*
+  Details de surface (passe « impeccable ») : selection, focus, chiffres, mouvement, cibles tactiles.
+  Le texte accent sur fond clair utilise --accent-strong (4.9:1) ; --accent seul reste reserve aux aplats.
+*/
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 2px;
+}
+table,
+.chiffres {
+  font-variant-numeric: tabular-nums;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  select,
+  input:not([type="checkbox"]):not([type="radio"]) {
+    min-height: 44px;
+  }
+}
+/* Mouvement reduit : on garde le changement d'etat, on retire la duree (pas de coupure globale a 0,01 ms). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+
+/*
+  Debordement de texte : regles communes.
+  - `.cell-texte` : cellule de tableau contenant du texte LIBRE saisi par un utilisateur (description,
+    fournisseur, commentaire...). Largeur comprise entre 9 et 22 rem ; un mot plus long que la colonne (ex.
+    une chaine sans espace) est coupe au lieu de forcer la colonne a s'elargir ou de sortir du cadre.
+  - `.cell-fixe` : valeur courte qui ne doit jamais passer sur deux lignes (date, montant, statut).
+  - Dans la zone de contenu, les textes courants coupent aussi les mots interminables.
+*/
+@layer components {
+  /* Indice de defilement horizontal : une ombre douce apparait sur le bord ou il reste du contenu masque
+     (technique « scroll shadows » en CSS pur, sans JavaScript ; les caches blancs suivent le defilement). */
+  .defilement-ombre {
+    background:
+      linear-gradient(to right, var(--surface) 30%, transparent) left center / 2rem 100% no-repeat local,
+      linear-gradient(to left, var(--surface) 30%, transparent) right center / 2rem 100% no-repeat local,
+      linear-gradient(to right, rgba(16, 20, 37, 0.14), transparent) left center / 0.75rem 100% no-repeat scroll,
+      linear-gradient(to left, rgba(16, 20, 37, 0.14), transparent) right center / 0.75rem 100% no-repeat scroll;
+  }
+  .cell-texte {
+    max-width: 22rem;
+    overflow-wrap: anywhere;
+  }
+  .cell-email {
+    max-width: 22rem;
+    overflow-wrap: anywhere;
+  }
+  /* Largeur MINIMALE d'une colonne de texte libre. `min-width` est ignore sur une cellule de tableau en
+     mise en page automatique : avec `overflow-wrap: anywhere`, le navigateur ecrasait la colonne a quelques
+     lettres de large (« Hebergement / et / deplacement... »). Un bloc invisible de largeur fixe a l'interieur
+     de la cellule impose ce minimum de facon fiable ; au-dela, le tableau defile au lieu d'ecraser la colonne. */
+  .cell-texte::before {
+    content: "";
+    display: block;
+    width: 9rem; /* un mot ordinaire n'est jamais coupe */
+    height: 0;
+  }
+  .cell-email::before {
+    content: "";
+    display: block;
+    width: 16rem; /* une adresse ordinaire tient sur une ligne ; une tres longue est coupee */
+    height: 0;
+  }
+  .cell-fixe {
+    white-space: nowrap;
+  }
+}
+
+/*
+  Tableaux « en cartes » sous 768 px : chaque ligne devient un bloc ou chaque valeur est precedee de son en-tete
+  (attribut data-label). Plus de colonnes Statut / Actions hors ecran. Le DOM reste un vrai <table> : les
+  lecteurs d'ecran et les tests gardent leurs roles ; seul l'affichage change.
+*/
+@media (max-width: 767px) {
+  .tableau-cartes thead {
+    display: none; /* les en-tetes sont repris dans chaque cellule par data-label */
+  }
+  .tableau-cartes,
+  .tableau-cartes tbody,
+  .tableau-cartes tr {
+    display: block;
+    width: 100%;
+  }
+  .tableau-cartes tr {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .tableau-cartes tr:last-child {
+    border-bottom: 0;
+  }
+  .tableau-cartes td {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    max-width: none !important;
+    padding: 0.3rem 0 !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+  }
+  .tableau-cartes td::before,
+  .tableau-cartes td.cell-texte::before,
+  .tableau-cartes td.cell-email::before {
+    content: attr(data-label);
+    display: block;
+    flex: 0 0 6.25rem;
+    width: 6.25rem;
+    height: auto;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+  .tableau-cartes td > * {
+    min-width: 0;
+  }
+  .tableau-cartes td {
+    overflow-wrap: anywhere;
+  }
+  /* Une valeur vide (aucun justificatif, aucune action) n'affiche pas son en-tete seul. */
+  .tableau-cartes td:empty,
+  .tableau-cartes td:has(> div:empty) {
+    display: none;
+  }
+}
+/*
+  Fond de l'application : deux halos tres diffus (emeraude en haut a droite, indigo en bas a gauche) sur le canevas.
+  Decoratif seulement : aucun contenu ne dependant d'eux, le contraste du texte est mesure sur --canvas.
+*/
+@layer components {
+  .fond-app {
+    background:
+      radial-gradient(56rem 34rem at 88% -8%, var(--halo-accent), transparent 62%),
+      radial-gradient(46rem 30rem at -4% 108%, var(--halo-indigo), transparent 62%),
+      var(--page);
+  }
+
+  /*
+    Titre de page : degrade emeraude -> indigo -> cyan qui defile tres lentement (24 s par cycle). Premier et
+    dernier arret identiques + background-size 200 % + repeat-x : la boucle est continue, sans saut. Sans
+    support de background-clip:text, la couleur pleine --titre-a reste affichee. Mouvement reduit : la regle
+    globale ci-dessus coupe l'animation.
+  */
+  .titre-page {
+    color: var(--titre-a);
+    font-size: 1.625rem;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    padding-bottom: 0.08em; /* evite de rogner les jambages (g, p, y) avec background-clip:text */
+  }
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .titre-page {
+      background-image: linear-gradient(100deg, var(--titre-a) 0%, var(--titre-b) 33%, var(--titre-c) 66%, var(--titre-a) 100%);
+      background-size: 200% 100%;
+      background-repeat: repeat-x;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      animation: titre-defile 24s linear infinite;
+    }
+  }
+  /* Surface « carte » des formulaires : angle large, ombre diffuse, liseré lumineux en haut. */
+  .carte-formulaire {
+    box-shadow: var(--ombre-carte);
+  }
+}
+/* Bouton de bascule : l'icone affichee est celle du mode VERS lequel on bascule (lune en clair, soleil en sombre). */
+.theme-soleil { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-soleil { display: block; }
+  :root:not([data-theme="light"]) .theme-lune { display: none; }
+}
+:root[data-theme="dark"] .theme-soleil { display: block; }
+:root[data-theme="dark"] .theme-lune { display: none; }
+:root[data-theme="light"] .theme-soleil { display: none; }
+:root[data-theme="light"] .theme-lune { display: block; }
+@keyframes titre-defile {
+  to {
+    background-position: 200% 0;
+  }
+}
+@layer base {
+  body :where(p, h1, h2, h3, h4, li, dd, dt, label, blockquote) {
+    overflow-wrap: anywhere;
+  }
+}

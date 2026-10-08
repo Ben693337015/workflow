@@ -1,0 +1,76 @@
+# Environnement de developpement local.
+# En production, le backend est deploye via NubiDeploy (section 14.1) ;
+# ce fichier sert uniquement a developper et lancer les tests en local.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: workflows
+      POSTGRES_PASSWORD: workflows
+      POSTGRES_DB: workflows
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workflows"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./app:/srv/app/app
+      - ./alembic:/srv/app/alembic
+      - ./scripts:/srv/app/scripts
+      # Pieces jointes (contrats, justificatifs, recus) : sans ce volume, elles disparaissent a la
+      # reconstruction du conteneur.
+      - pieces_jointes:/var/lib/workflows/pieces-jointes
+    env_file:
+      - .env
+    environment:
+      # Applique les migrations au demarrage : `docker compose up` suffit, plus d'etape manuelle.
+      RUN_MIGRATIONS: "true"
+      DATABASE_URL: postgresql+asyncpg://workflows:workflows@db:5432/workflows
+      CORS_ALLOW_ORIGINS: http://localhost:3000
+      # Explicite ici (plutot que de compter sur .env) pour que les liens
+      # de decision generes en local pointent bien vers le frontend
+      # Next.js reellement lance ci-dessous (port 3000), pas vers un
+      # ancien port Vite le cas echeant present dans un .env local perime.
+      FRONTEND_BASE_URL: http://localhost:3000
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend/src:/srv/frontend/src
+      - ./frontend/public:/srv/frontend/public
+    environment:
+      # Lu cote serveur par le proxy /api/backend, jamais expose au
+      # navigateur (voir frontend/README.md) - "api" est le nom du service
+      # backend ci-dessus, resolu par le reseau Docker Compose.
+      API_BASE_URL: http://api:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  pieces_jointes:

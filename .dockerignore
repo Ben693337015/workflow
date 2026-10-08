@@ -1,0 +1,17 @@
+__pycache__
+*.pyc
+.git
+.gitignore
+.env
+.venv
+venv
+.pytest_cache
+htmlcov
+tests
+README.md
+scripts/verification
+# Ce Dockerfile ne copie jamais rien depuis frontend/ (COPY explicite :
+# app, alembic, alembic.ini, scripts uniquement) - l'exclure evite d'envoyer
+# node_modules/.next au demon Docker a chaque build (potentiellement
+# plusieurs centaines de Mo) pour rien.
+frontend
